@@ -1,0 +1,17 @@
+{
+  "name": "m3u8download",
+  "version": "1.0.0",
+  "description": "下载m3u8视频",
+  "main": "node ./example/app",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "async": "^2.6.2",
+    "log4js": "^1.1.1",
+    "mkdirp": "^0.5.1",
+    "mysql": "^2.17.1",
+    "node-m3u8-to-mp4": "^1.0.4",
+    "sequelize": "^3.30.4"
+  }
+}
