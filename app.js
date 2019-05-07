@@ -1,4 +1,7 @@
-const converter = require("node-m3u8-to-mp4");
+// const converter = require("node-m3u8-to-mp4");
+var m3u8ToMp4 = require("m3u8-to-mp4");
+var converter = new m3u8ToMp4();
+
 const  mkdirp=require('mkdirp')
 const  fs=require('fs')
 //日志
@@ -18,7 +21,7 @@ const data_db= new Sequelize(
 start()
 function start() {
     //data for bin/data.json
-    data_db.query("select * from video where g ='0'").then(function (q) {
+    data_db.query("Select * from video where g ='0' and  b='合集'").then(function (q) {
         down(q[0])
     });
 }
@@ -38,7 +41,7 @@ function down(list){
         }
     );
 }
-function fetchPageInfo(item,cb){
+function fetchPageInfo(item,cb){``
     var path=""
     if(item.b=="合集"){
         var title=item.d.split("__");
@@ -49,16 +52,28 @@ function fetchPageInfo(item,cb){
             mkdir("output/"+item.b+"/"+item.c)
             path="output/"+item.b+"/"+item.c+"/"+title+".mp4"
         }
-        converter(item.f,path).then(() => {
-            cb()
-        });
     }else{
         path="output/"+item.b+"/"+item.c+"/"+item.d+".mp4"
         mkdir("output/"+item.b+"/"+item.c)
     }
-    converter(item.f,path).then(() => {
-        cb()
-    });
+
+    // converter(item.f,path).then(() => {
+    //     data_db.query("update video set g ='1' where  g ='0'").then(function (q) {
+    //         cb()
+    //     });
+    //
+    // });
+    //
+    converter
+        .setInputFile(item.f)
+        .setOutputFile(path)
+        .start()
+        .then(() => {
+            data_db.query("update video set g ='1' where f='"+item.f+"' and g ='0'").then(function (q) {
+                cb()
+            });
+        });
+
 
 }
 
