@@ -64,15 +64,28 @@ function fetchPageInfo(item,cb){``
     //
     // });
     //
-    converter
-        .setInputFile(item.f)
-        .setOutputFile(path)
-        .start()
-        .then(() => {
-            data_db.query("update video set g ='1' where f='"+item.f+"' and g ='0'").then(function (q) {
-                cb()
-            });
+     data_db.query("select count(1) num  from video where f='"+item.f+"'  and g ='0'").then(function (q) {
+        //是否下载
+        if(q[0][0].num>0){
+            //更新为下载中
+            data_db.query("update video set g ='2' where f='"+item.f+"' and g ='0'").then(function (q) {
+                converter
+                    .setInputFile(item.f)
+                    .setOutputFile(path)
+                    .start()
+                    .then(() => {
+                    //更新为已完成
+                    data_db.query("update video set g ='1' where f='"+item.f+"' and g ='0'").then(function (q) {
+                    cb()
+                    });
+                });
+
         });
+        }else{
+            cb()
+        }
+
+    });
 
 
 }
